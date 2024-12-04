@@ -80,7 +80,7 @@ web_analytics_agent = Agent(
 web_insights_agent = Agent(
     name="Web Insights Agent",
     model="gpt-4o-mini",
-    instructions="""You are a Web Insights Agent that provide insights about the data provided and summarize the insights from other agents, including actionable recommendations"""
+    instructions="""You are a Web Insights Agent that provide insights about the data provided and summarize the insights from other agents, including actionable recommendations""",
     functions=[generate_web_insights]
 )
 
