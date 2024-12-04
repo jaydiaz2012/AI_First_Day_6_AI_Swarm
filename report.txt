@@ -1,0 +1,147 @@
+Web Analytics Results:
+Here's the statistical summary and analysis of your dataset based on the provided data:
+
+### Overview
+
+#### Date
+- **Count**: 52,721
+- **Mean**: 2020-05-19 14:22:09
+- **Min**: 2020-01-01
+- **Max**: 2020-09-30
+
+#### Source
+- **Count**: 52,721
+- **Unique**: 22
+- **Top Source**: Facebook (12,954 occurrences)
+
+#### Medium
+- **Count**: 52,721
+- **Unique**: 6
+- **Top Medium**: CPC (16,833 occurrences)
+
+#### Delivery Available
+- **Count**: 52,721
+- **Unique**: 3
+- **Top Value**: No data (31,953 occurrences)
+
+#### Device Type
+- **Count**: 52,721
+- **Unique**: 3
+- **Top Device**: Mobile (24,416 occurrences)
+
+#### Promo Activated
+- **Count**: 52,721
+- **Unique**: 2
+- **Top Value**: No (27,548 occurrences)
+
+#### Filter Used
+- **Count**: 52,721
+- **Unique**: 2
+- **Top Value**: No (37,290 occurrences)
+
+### Page Interaction Metrics
+- **Pageviews**: 
+  - **Mean**: 583.76
+  - **Min**: 0
+  - **Max**: 34,832
+  - **Std Dev**: 1,452.00
+
+- **Visits**: 
+  - **Mean**: 127.12
+  - **Min**: 1
+  - **Max**: 6,975
+  - **Std Dev**: 384.87
+
+- **Product Clicks**: 
+  - **Mean**: 890.76
+  - **Min**: 0
+  - **Max**: 32,460
+  - **Std Dev**: 2,100.56
+
+- **Add to Cart**: 
+  - **Mean**: 177.97
+  - **Min**: 0
+  - **Max**: 6,486
+  - **Std Dev**: 419.90
+
+- **Checkout**: 
+  - **Mean**: 187.59
+  - **Min**: 0
+  - **Max**: 4,936.96
+  - **Std Dev**: 441.13
+
+- **Transactions**: 
+  - **Mean**: 20.09
+  - **Min**: 0
+  - **Max**: 1,113
+  - **Std Dev**: 52.43
+
+### Revenue
+- **Count**: 52,721
+- **Unique**: 21,242
+- **Top Revenue**: ₱0 (14,292 occurrences)
+
+### Ad Spend
+- **Count**: 52,721
+- **Unique**: 51,201
+- **Top Spend**: ₱869,459 (3 occurrences)
+
+### Null Values
+- All fields in the dataset have zero null values, indicating a complete dataset.
+
+### Correlations
+- **Strongest Correlations**:
+  - Pageviews and Product Clicks (0.857)
+  - Product Clicks and Add to Cart (0.999)
+  - Pageviews and Visits (0.844)
+
+### Conclusion
+The dataset reflects a significant amount of page interaction with good coverage across various dimensions. The device type shows a strong mobile presence, and there are patterns in user engagements across different metrics, suggesting areas for focus in user experience strategies.
+
+If you need further analysis or specific insights, please let me know!
+
+Web Insights Results:
+Based on your dataset, here are the insights and actionable recommendations:
+
+### Insights
+
+1. **Traffic Sources**:
+   - The top traffic sources by pageviews are Google (12,296,272), Facebook (11,915,408) and TikTok (2,072,820). 
+   - Direct visits are significant, with 2,929,713 pageviews.
+   - Other platforms like Cityads, Instagram, and Actionpay also contribute notably, but their volume is significantly lower compared to Google and Facebook.
+
+2. **Conversions**:
+   - Google is also the leading source for transactions (388,169), followed by Facebook (377,909) and TikTok (55,397).
+   - The transaction rates seem high on platforms with higher traffic volumes like Facebook and Google.
+
+3. **Engagement Metrics**:
+   - The number of product clicks highlights that Facebook generated the highest clicks (19,905,370), followed closely by Google (19,211,270).
+   - Direct product clicks show a significant figure at 3,886,140.
+
+4. **Underperforming Sources**:
+   - Some platforms like YouTube and Baidu show zero in transactions, indicating either poor targeting or a need for engagement strategies.
+
+5. **Newsletter Performance**:
+   - The newsletter contributes a fair number of visits (16,911) and transactions (1,955), but there's potential for growth.
+
+### Recommendations
+
+1. **Focus on High-Performing Sources**:
+   - Prioritize advertising on Google and Facebook where traffic and conversions are highest to maximize returns.
+
+2. **Optimize TikTok Marketing**:
+   - Given the high traffic from TikTok, consider optimizing content and ads specifically designed for this platform to capitalize on its potential.
+
+3. **Explore Underperforming Channels**:
+   - Investigate why channels like YouTube and Baidu are underperforming. If applicable, reallocate resources or discontinue efforts on these platforms.
+
+4. **Enhance Newsletter Strategy**:
+   - Strengthening the newsletter strategy can potentially increase engagement and conversion rates. Consider regular promotions or exclusive content.
+
+5. **Direct Engagement**:
+   - As direct traffic shows significant performance, ensure that systems and follow-ups are in place to capitalize on brand loyalty and returning visitors.
+
+6. **Content Diversification**:
+   - Utilize various content types (blogs, videos) on Facebook and Google to maintain fresh engagement, as they are the main sources of traffic and transactions.
+
+Overall, leveraging high-performing traffic sources while refining strategies on less effective channels will optimize your business outcomes.
