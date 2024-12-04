@@ -1,3 +1,4 @@
+pip install pandas matplotlib seaborn streamlit openai
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
