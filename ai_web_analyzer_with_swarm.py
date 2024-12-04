@@ -171,3 +171,53 @@ def generate_report(insights, advanced_analysis_result, file_path="report.txt"):
         file.write("**Advanced Analysis:**\n")
         file.write(advanced_analysis_result + "\n")
     return file_path
+
+def app():
+    st.title("AI-Powered E-commerce Data Analyzer with Swarm")
+    st.write("Upload your dataset to analyze, visualize, and generate advanced business insights.")
+
+    # File upload
+    uploaded_file = st.file_uploader("Upload CSV file", type="csv")
+    if uploaded_file:
+        df = load_dataset(uploaded_file)
+        if df is not None:
+            st.write("### Dataset Preview")
+            st.dataframe(df.head())
+
+            # Dataset Analysis
+            st.write("### Dataset Analysis")
+            summary = analyze_dataset(df)
+            st.json(summary)
+
+            # Advanced Analysis
+            st.write("### Advanced Analysis (Clustering, Anomalies, Trends)")
+            advanced_analysis_result = advanced_analysis(df)
+            st.text_area("Advanced Analysis Results", advanced_analysis_result, height=300)
+
+            # Data Visualizations
+            st.write("### Data Visualizations")
+            visualizations = visualize_data(df)
+            for title, fig in visualizations.items():
+                st.write(title.replace('_', ' ').title())
+                st.pyplot(fig)
+
+            # Business Insights
+            st.write("### Business Insights")
+            model = ChatCompletion(api_key=OPENAI_API_KEY)
+            insights = generate_insights(summary, model)
+            st.text_area("Insights", insights, height=200)
+
+            # Download Report
+            if st.button("Download Report"):
+                report_path = generate_report(insights, advanced_analysis_result)
+                with open(report_path, "rb") as file:
+                    st.download_button(
+                        label="Download Report",
+                        data=file,
+                        file_name="business_insights_report.txt",
+                        mime="text/plain"
+                    )
+
+# Run Streamlit App
+if __name__ == "__main__":
+    app()
