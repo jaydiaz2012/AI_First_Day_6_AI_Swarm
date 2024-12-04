@@ -1,105 +1,172 @@
 import pandas as pd
-import openai
 import matplotlib.pyplot as plt
-from openai_swarm import SwarmAgent  
-from firecrawl import FirecrawlAgent  
+import seaborn as sns
+import streamlit as st
+import openai
+from openai import ChatCompletion
+from openai_swarm import SwarmAgent
 
-class WebAnalyticsAI:
-    def __init__(self, framework="swarm", dataset_path=None):
-        self.framework = framework
-        self.dataset_path = dataset_path
-        self.data = None
-        self.agent = None
+# Configure API Keys
+OPENAI_API_KEY = "" 
+openai.api_key = OPENAI_API_KEY
 
-        if self.dataset_path:
-            self.load_data()
+# Load dataset
+def load_dataset(file):
+    try:
+        return pd.read_csv(file)
+    except Exception as e:
+        st.error(f"Error loading dataset: {e}")
+        return None
 
-        self.initialize_agent()
+# Analyze dataset
+def analyze_dataset(df):
+    summary = {
+        "overview": df.describe(include="all").to_dict(),
+        "null_values": df.isnull().sum().to_dict(),
+        "correlations": df.corr().to_dict(),
+    }
+    return summary
 
-    def load_data(self):
-        try:
-            self.data = pd.read_csv(self.dataset_path)
-            print(f"Dataset loaded successfully from {self.dataset_path}")
-        except Exception as e:
-            print(f"Error loading dataset: {e}")
+def generate_web_insights(df):
+    web_insights = {
+        'source_pageviews': df.groupby('source')['pageviews'].sum(),
+        'source_visits': df.groupby('source')['visits'].sum(),
+        'source_transactions': df.groupby('source')['transactions'].sum(),
+        'source_product_click: df.groupby('source')['productClick'].sum()
+    }
+    return web_insights
 
-    def initialize_agent(self):
-        if self.framework.lower() == "swarm":
-            self.agent = SwarmAgent(model="gpt-4o-mini")  # Adjust as per actual API
-        elif self.framework.lower() == "firecrawl":
-            self.agent = FirecrawlAgent(model="gpt-4o-mini")
-        else:
-            raise ValueError("Unsupported framework. Choose 'swarm' or 'firecrawl'.")
-        print(f"Initialized agent using {self.framework} framework.")
+def generate_web_visuals(df):
+    visualizations = {}
+    
+    # Page Views Distribution
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(df, x="source", y="pageviews")
+    plt.title("Page Views Distribution")
+    visualizations['page_views_distribution'] = plt.gcf()   
+    plt.close()
 
-    def analyze_data(self):
-        if self.data is None:
-            print("No dataset loaded for analysis.")
-            return
+    # Visits Distribution
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(df, x="source", y="visits")
+    plt.title("Visits Distribution")
+    visualizations['visits_distribution'] = plt.gcf()
+    plt.close()
 
-        summary = self.data.describe()
-        print("Dataset Summary:")
-        print(summary)
+    # Transactions Trends
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(df, x="source", y="transactions")
+    plt.title("Transactions Trends")
+    visualizations['transactions_trends'] = plt.gcf()
+    plt.close()
 
-        missing_data = self.data.isnull().sum()
-        print("\nMissing Data Count:")
-        print(missing_data)
+    # Product Click Trends
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(df, x="source", y="productClick")
+    plt.title("Product Clicks Trends")
+    visualizations['product_click_trends'] = plt.gcf()
+    plt.close()
+    
+    return visualizations
+    
+web_analytics_agent = Agent(
+    name="Web Analyst Agent",
+    model="gpt-4o-mini",
+    instructions="You are a web analyst agent that cleans the dataset and report on the statistical summary of the dataset",
+    functions=[analyze_dataset],
+)
 
-    def generate_visualizations(self):
-        if self.data is None:
-            print("No dataset loaded for visualization.")
-            return
+web_insights_agent = Agent(
+    name="Web Insights Agent",
+    model="gpt-4o-mini",
+    instructions="""You are a Web Insights Agent that provide insights about the data provided and summarize the insights from other agents, including actionable recommendations"
+    functions=[generate_web_insights]
+)
 
-        try:
-            plt.figure(figsize=(10, 6))
-            self.data["pageviews"].hist(bins=30)
-            plt.title("Page Views Distribution")
-            plt.xlabel("Page Views")
-            plt.ylabel("Frequency")
-            plt.show()
-        except Exception as e:
-            print(f"Error generating visualizations: {e}")
-
-    def generate_insights(self):
-        if self.data is None:
-            print("No dataset loaded for insights generation.")
-            return
-
-        query = (
-            "Analyze this web analytics dataset for patterns and generate actionable insights "
-            "focusing on user engagement, traffic sources, and conversion rates."
-        )
-        
-        try:
-            insights = self.agent.query(query, data=self.data.to_dict())  # Adjust based on API
-            print("Insights:")
-            print(insights)
-        except Exception as e:
-            print(f"Error generating insights: {e}")
-
-    def generate_report(self, output_path="report.txt"):
-        if self.data is None:
-            print("No dataset loaded for report generation.")
-            return
-
-        query = "Create a detailed business report from the given web analytics data."
-
-        try:
-            report = self.agent.query(query, data=self.data.to_dict())  # Adjust based on API
-            with open(output_path, "w") as f:
-                f.write(report)
-            print(f"Report saved to {output_path}")
-        except Exception as e:
-            print(f"Error generating report: {e}")
+web_insights_visuals_agent = Agent(
+    name="Web_Visuals_Agent",
+    model="gpt-4o-mini",
+    instructions="""You are a data visualization expert that create visualizations on a given datase and gives summary of the data visuals",
+    fuctions=[generate_web_visuals]
+)
 
 if __name__ == "__main__":
-    dataset_path = "https://raw.githubusercontent.com/jaydiaz2012/AI_First_Day_6_AI_Swarm/refs/heads/main/ai%20first%20sales%20data%20-%20sales%20(1).csv"
+    client = Swarm()
+    
+    web_analytics_response = client.run(
+        agent=web_analytics_agent,
+        messages=[{
+            "role": "user", 
+            "content": "Please clean and analyze my dataset."
+        }]
+    )
+    
+    print("\nWeb Analytics Results:")
+    print(web_analytics_response.messages[-1]["content"]) 
+  
+    web_insights_response = client.run(
+        agent=web_insights_agent,
+        messages=[{
+            "role": "user", 
+            "content": "Please provide insights based from my dataset."
+        }]
+    )
+    
+    print("\nWeb Insights Results:")
+    print(web_insights.messages[-1]["content"])  
 
-    # Create an instance of the WebAnalyticsAI class
-    ai_agent = WebAnalyticsAI(framework="swarm", dataset_path=dataset_path)
+    web_insights_visuals_response = client.run(
+        agent=web_insights_visuals_agent,
+        messages=[{
+            "role": "user", 
+            "content": "Please provide data visualizations from my dataset."
+        }]
+    )
+    
+    print("\nWeb Analytics Results:")
+    print(web_insights_visuals_response.messages[-1]["content"])  
+  
+# Advanced analysis using Swarm
+def advanced_analysis(df):
+    try:
+        prompt = (
+            "Perform clustering, detect anomalies, and provide predictive trends "
+            f"on this dataset:\n{df.to_csv(index=False)}"
+        )
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a data analysis assistant using Swarm."},
+                {"role": "user", "content": prompt}
+            ],
+        )
+        return response.choices[0].message['content']
+    except Exception as e:
+        st.error(f"Error performing advanced analysis: {e}")
+        return None
 
-    # Perform operations
-    ai_agent.analyze_data()
-    ai_agent.generate_visualizations()
-    ai_agent.generate_insights()
-    ai_agent.generate_report(output_path="business_insights_report.txt")
+# Generate business insights
+def generate_insights(summary, model):
+    prompt = (
+        f"Here is the dataset summary:\n{summary}\n"
+        "Generate actionable business insights from the above dataset."
+    )
+    response = model.create(
+        engine="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a data analyst AI."},
+            {"role": "user", "content": prompt}
+        ],
+    )
+    return response.choices[0].message['content']
+
+# Generate a report
+def generate_report(insights, advanced_analysis_result, file_path="report.txt"):
+    with open(file_path, "w") as file:
+        file.write("Automated Business Insights Report\n")
+        file.write("=" * 50 + "\n\n")
+        file.write("**Insights:**\n")
+        file.write(insights + "\n\n")
+        file.write("**Advanced Analysis:**\n")
+        file.write(advanced_analysis_result + "\n")
+    return file_path
