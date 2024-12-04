@@ -1,148 +1,105 @@
-pip install matplotlib 
-pip install seaborn 
-pip install streamlit 
-pip install openai
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import streamlit as st
-from openai import ChatCompletion
 import openai
-from swarm import SwarmAgent
+import matplotlib.pyplot as plt
+from openai_swarm import SwarmAgent  
+from firecrawl import FirecrawlAgent  
 
-# Configure API Keys
-OPENAI_API_KEY = ""
-openai.api_key = OPENAI_API_KEY
+class WebAnalyticsAI:
+    def __init__(self, framework="swarm", dataset_path=None):
+        self.framework = framework
+        self.dataset_path = dataset_path
+        self.data = None
+        self.agent = None
 
-# Load dataset
-def load_dataset(file):
-    try:
-        return pd.read_csv(file)
-    except Exception as e:
-        st.error(f"Error loading dataset: {e}")
-        return None
+        if self.dataset_path:
+            self.load_data()
 
-# Analyze dataset
-def analyze_dataset(df):
-    summary = {
-        "overview": df.describe(include="all").to_dict(),
-        "null_values": df.isnull().sum().to_dict(),
-        "correlations": df.corr().to_dict(),
-    }
-    return summary
+        self.initialize_agent()
 
-# Advanced analysis using Swarm
-def advanced_analysis(df):
-    try:
-        prompt = (
-            "Perform clustering, detect anomalies, and provide predictive trends "
-            f"on this e-commerce dataset:\n{df.to_csv(index=False)}"
+    def load_data(self):
+        try:
+            self.data = pd.read_csv(self.dataset_path)
+            print(f"Dataset loaded successfully from {self.dataset_path}")
+        except Exception as e:
+            print(f"Error loading dataset: {e}")
+
+    def initialize_agent(self):
+        if self.framework.lower() == "swarm":
+            self.agent = SwarmAgent(model="gpt-4")  # Adjust as per actual API
+        elif self.framework.lower() == "firecrawl":
+            self.agent = FirecrawlAgent(model="gpt-4")
+        else:
+            raise ValueError("Unsupported framework. Choose 'swarm' or 'firecrawl'.")
+        print(f"Initialized agent using {self.framework} framework.")
+
+    def analyze_data(self):
+        if self.data is None:
+            print("No dataset loaded for analysis.")
+            return
+
+        summary = self.data.describe()
+        print("Dataset Summary:")
+        print(summary)
+
+        missing_data = self.data.isnull().sum()
+        print("\nMissing Data Count:")
+        print(missing_data)
+
+    def generate_visualizations(self):
+        if self.data is None:
+            print("No dataset loaded for visualization.")
+            return
+
+        try:
+            plt.figure(figsize=(10, 6))
+            self.data["Page Views"].hist(bins=30)
+            plt.title("Page Views Distribution")
+            plt.xlabel("Page Views")
+            plt.ylabel("Frequency")
+            plt.show()
+        except Exception as e:
+            print(f"Error generating visualizations: {e}")
+
+    def generate_insights(self):
+        if self.data is None:
+            print("No dataset loaded for insights generation.")
+            return
+
+        query = (
+            "Analyze this web analytics dataset for patterns and generate actionable insights "
+            "focusing on user engagement, traffic sources, and conversion rates."
         )
-        response = openai.ChatCompletion.create(
-            model="gpt-40-mini",
-            messages=[
-                {"role": "system", "content": "You are a data analysis assistant using Swarm."},
-                {"role": "user", "content": prompt}
-            ],
-        )
-        return response.choices[0].message['content']
-    except Exception as e:
-        st.error(f"Error performing advanced analysis: {e}")
-        return None
+        
+        try:
+            insights = self.agent.query(query, data=self.data.to_dict())  # Adjust based on API
+            print("Insights:")
+            print(insights)
+        except Exception as e:
+            print(f"Error generating insights: {e}")
 
-# Visualize data
-def visualize_data(df):
-    visualizations = {}
-    
-    # Category Distribution
-    plt.figure(figsize=(10, 6))
-    sns.countplot(x='source', data=df)
-    plt.title("Source Distribution")
-    visualizations['category_distribution'] = plt.gcf()
-    plt.close()
+    def generate_report(self, output_path="report.txt"):
+        if self.data is None:
+            print("No dataset loaded for report generation.")
+            return
 
-    # Monthly Sales Trends
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x="date", y="revenue", data=df)
-    plt.title("Monthly Sales Trends")
-    visualizations['monthly_sales_trends'] = plt.gcf()
-    plt.close()
-    
-    return visualizations
+        query = "Create a detailed business report from the given web analytics data."
 
-# Generate business insights
-def generate_insights(summary, model):
-    prompt = (
-        f"Here is the dataset summary:\n{summary}\n"
-        "Generate actionable business insights from the above dataset."
-    )
-    response = model.create(
-        engine="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a data analyst AI."},
-            {"role": "user", "content": prompt}
-        ],
-    )
-    return response.choices[0].message['content']
+        try:
+            report = self.agent.query(query, data=self.data.to_dict())  # Adjust based on API
+            with open(output_path, "w") as f:
+                f.write(report)
+            print(f"Report saved to {output_path}")
+        except Exception as e:
+            print(f"Error generating report: {e}")
 
-# Generate a report
-def generate_report(insights, advanced_analysis_result, file_path="report.txt"):
-    with open(file_path, "w") as file:
-        file.write("Automated Business Insights Report\n")
-        file.write("=" * 50 + "\n\n")
-        file.write("**Insights:**\n")
-        file.write(insights + "\n\n")
-        file.write("**Advanced Analysis:**\n")
-        file.write(advanced_analysis_result + "\n")
-    return file_path
-
-# Streamlit App
-def app():
-    st.title("AI-Powered E-commerce Data Analyzer with Swarm")
-    st.write("Upload your dataset to analyze, visualize, and generate advanced business insights.")
-
-    # File upload
-    uploaded_file = st.file_uploader("Upload CSV file", type="csv")
-    if uploaded_file:
-        df = load_dataset(uploaded_file)
-        if df is not None:
-            st.write("### Dataset Preview")
-            st.dataframe(df.head())
-
-            # Dataset Analysis
-            st.write("### Dataset Analysis")
-            summary = analyze_dataset(df)
-            st.json(summary)
-
-            # Advanced Analysis
-            st.write("### Advanced Analysis (Clustering, Anomalies, Trends)")
-            advanced_analysis_result = advanced_analysis(df)
-            st.text_area("Advanced Analysis Results", advanced_analysis_result, height=300)
-
-            # Data Visualizations
-            st.write("### Data Visualizations")
-            visualizations = visualize_data(df)
-            for title, fig in visualizations.items():
-                st.write(title.replace('_', ' ').title())
-                st.pyplot(fig)
-
-            # Business Insights
-            st.write("### Business Insights")
-            model = ChatCompletion(api_key=OPENAI_API_KEY)
-            insights = generate_insights(summary, model)
-            st.text_area("Insights", insights, height=200)
-
-            # Download Report
-            if st.button("Download Report"):
-                report_path = generate_report(insights, advanced_analysis_result)
-                with open(report_path, "rb") as file:
-                    st.download_button(
-                        label="Download Report",
-                        data=file,
-                        file_name="business_insights_report.txt",
-                        mime="text/plain"
-                    )
-
-# Run Streamlit App
 if __name__ == "__main__":
-    app()
+    dataset_path = "web_analytics_data.csv"  # Replace with actual dataset path
+
+    # Create an instance of the WebAnalyticsAI class
+    ai_agent = WebAnalyticsAI(framework="swarm", dataset_path=dataset_path)
+
+    # Perform operations
+    ai_agent.analyze_data()
+    ai_agent.generate_visualizations()
+    ai_agent.generate_insights()
+    ai_agent.generate_report(output_path="business_insights_report.txt")
