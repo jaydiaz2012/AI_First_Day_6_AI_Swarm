@@ -11,9 +11,10 @@ OPENAI_API_KEY = ""
 openai.api_key = OPENAI_API_KEY
 
 # Load dataset
-def load_dataset(file):
+def load_dataset(df):
+    df = "https://raw.githubusercontent.com/jaydiaz2012/AI_First_Day_6_AI_Swarm/refs/heads/main/ai%20first%20sales%20data%20-%20sales%20(1).csv"
     try:
-        return pd.read_csv(file)
+        return pd.read_csv(df)
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
         return None
