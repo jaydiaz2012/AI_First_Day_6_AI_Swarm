@@ -73,21 +73,21 @@ def generate_web_visuals(df):
 web_analytics_agent = Agent(
     name="Web Analyst Agent",
     model="gpt-4o-mini",
-    instructions="You are a web analyst agent that cleans the dataset and report on the statistical summary of the dataset",
+    instructions="""You are a web analyst agent that cleans the dataset and report on the statistical summary of the dataset""",
     functions=[analyze_dataset],
 )
 
 web_insights_agent = Agent(
     name="Web Insights Agent",
     model="gpt-4o-mini",
-    instructions="""You are a Web Insights Agent that provide insights about the data provided and summarize the insights from other agents, including actionable recommendations"
+    instructions="""You are a Web Insights Agent that provide insights about the data provided and summarize the insights from other agents, including actionable recommendations"""
     functions=[generate_web_insights]
 )
 
 web_insights_visuals_agent = Agent(
     name="Web_Visuals_Agent",
     model="gpt-4o-mini",
-    instructions="""You are a data visualization expert that create visualizations on a given datase and gives summary of the data visuals",
+    instructions="""You are a data visualization expert that create visualizations on a given datase and gives summary of the data visuals""",
     fuctions=[generate_web_visuals]
 )
 
