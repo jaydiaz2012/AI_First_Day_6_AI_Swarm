@@ -25,9 +25,9 @@ class WebAnalyticsAI:
 
     def initialize_agent(self):
         if self.framework.lower() == "swarm":
-            self.agent = SwarmAgent(model="gpt-4")  # Adjust as per actual API
+            self.agent = SwarmAgent(model="gpt-4o-mini")  # Adjust as per actual API
         elif self.framework.lower() == "firecrawl":
-            self.agent = FirecrawlAgent(model="gpt-4")
+            self.agent = FirecrawlAgent(model="gpt-4o-mini")
         else:
             raise ValueError("Unsupported framework. Choose 'swarm' or 'firecrawl'.")
         print(f"Initialized agent using {self.framework} framework.")
@@ -52,7 +52,7 @@ class WebAnalyticsAI:
 
         try:
             plt.figure(figsize=(10, 6))
-            self.data["Page Views"].hist(bins=30)
+            self.data["pageviews"].hist(bins=30)
             plt.title("Page Views Distribution")
             plt.xlabel("Page Views")
             plt.ylabel("Frequency")
@@ -93,7 +93,7 @@ class WebAnalyticsAI:
             print(f"Error generating report: {e}")
 
 if __name__ == "__main__":
-    dataset_path = "web_analytics_data.csv"  # Replace with actual dataset path
+    dataset_path = "https://raw.githubusercontent.com/jaydiaz2012/AI_First_Day_6_AI_Swarm/refs/heads/main/ai%20first%20sales%20data%20-%20sales%20(1).csv"
 
     # Create an instance of the WebAnalyticsAI class
     ai_agent = WebAnalyticsAI(framework="swarm", dataset_path=dataset_path)
