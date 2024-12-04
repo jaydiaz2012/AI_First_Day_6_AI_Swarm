@@ -4,9 +4,10 @@ import seaborn as sns
 import streamlit as st
 from openai import ChatCompletion
 import openai
+from swarm import SwarmAgent
 
 # Configure API Keys
-OPENAI_API_KEY = "your-api-key"  # Replace with your OpenAI API key
+OPENAI_API_KEY = ""
 openai.api_key = OPENAI_API_KEY
 
 # Load dataset
@@ -34,7 +35,7 @@ def advanced_analysis(df):
             f"on this e-commerce dataset:\n{df.to_csv(index=False)}"
         )
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-40-mini",
             messages=[
                 {"role": "system", "content": "You are a data analysis assistant using Swarm."},
                 {"role": "user", "content": prompt}
@@ -51,14 +52,14 @@ def visualize_data(df):
     
     # Category Distribution
     plt.figure(figsize=(10, 6))
-    sns.countplot(x='Category', data=df)
-    plt.title("Category Distribution")
+    sns.countplot(x='source', data=df)
+    plt.title("Source Distribution")
     visualizations['category_distribution'] = plt.gcf()
     plt.close()
 
     # Monthly Sales Trends
     plt.figure(figsize=(10, 6))
-    sns.barplot(x="Month", y="Sales", data=df)
+    sns.barplot(x="date", y="revenue", data=df)
     plt.title("Monthly Sales Trends")
     visualizations['monthly_sales_trends'] = plt.gcf()
     plt.close()
@@ -72,7 +73,7 @@ def generate_insights(summary, model):
         "Generate actionable business insights from the above dataset."
     )
     response = model.create(
-        engine="gpt-4",
+        engine="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a data analyst AI."},
             {"role": "user", "content": prompt}
