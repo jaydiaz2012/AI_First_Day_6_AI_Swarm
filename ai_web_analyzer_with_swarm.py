@@ -33,7 +33,7 @@ def generate_web_insights(df):
         'source_pageviews': df.groupby('source')['pageviews'].sum(),
         'source_visits': df.groupby('source')['visits'].sum(),
         'source_transactions': df.groupby('source')['transactions'].sum(),
-        'source_product_click: df.groupby('source')['productClick'].sum()
+        'source_product_click': df.groupby('source')['productClick'].sum()
     }
     return web_insights
 
